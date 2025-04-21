@@ -1,0 +1,155 @@
+site_name: Confidential Computing LinuxONE Workshop
+repo_url: https://github.com/ibm-wsc/ConfidentialComputingOnLinuxONE
+site_url: https://ibm-wsc.github.io/ConfidentialComputingOnLinuxONE/
+edit_uri: edit/main/docs
+nav:
+  - Home: index.md
+  - On-premises Labs:
+    - Lab Access: access.md
+    - GREP11 with CENA4SEE Lab: 
+      - lab/grep11/index.md
+      - Launch Ubuntu KVM guest: lab/grep11/launchKVMguest.md
+      - Configure rsyslog on your KVM guest: lab/grep11/configureRsyslog.md
+      - Configure rsyslog client certs on the RHEL host: lab/grep11/configureRsyslogForGREP11.md
+      - Create Contract for GREP11 Server: lab/grep11/createGREP11Contract.md
+      - Launch GREP11 Server: lab/grep11/launchGREP11guest.md
+      - Run GREP11 Client code: lab/grep11/configureGrep11TestClient.md
+      - Standard guest vs. SE-enabled HPVS 2.1.x guest: lab/grep11/hackMeIfYouCan.md
+      - Lab Cleanup:  lab/grep11/labCleanup.md
+    - PayNow Lab:
+      - lab/paynow/index.md
+      - Launch Ubuntu KVM guest: lab/paynow/launchKVMguest.md
+      - Download PayNow GitHub repo: lab/paynow/downloadPayNowRepo.md
+      - Create OCI image: lab/paynow/createOCIimage.md
+      - Run OCI image: lab/paynow/runOCIimage.md
+      - Use the PayNow demo app: lab/paynow/useWebApp.md
+      - Find sensitive data in core dump: lab/paynow/findSensitiveData.md
+      - Configure rsyslog on your KVM guest: lab/paynow/configureRsyslog.md
+      - Configure rsyslog client certs on the RHEL host: lab/paynow/configureRsyslogForHPVS.md
+      - Create contract for HPVS guest: lab/paynow/createContract.md
+      - Launch HPVS guest for PayNow: lab/paynow/launchHPVSguest.md
+      - Use the HPVS-based PayNow demo app: lab/paynow/useHPVSWebApp.md
+      - Try to find sensitive data in core dump: lab/paynow/tryToFindSensitiveData.md
+      - Lab Cleanup:  lab/paynow/labCleanup.md
+  - IBM Cloud-based labs:
+    - lab/cloud/index.md
+    - Overview and Prerequisites: 
+      - Labs overview: lab/cloud/prereqs/index.md
+      - Create a Virtual Private Cloud: lab/cloud/prereqs/vpc.md
+      - Create a Public Gateway: lab/cloud/prereqs/gateway.md
+      - Create an IBM Log Analysis instance: lab/cloud/prereqs/ibmlog.md
+      - Establish a "prep system" to use to create contracts: lab/cloud/prereqs/prepsystem.md
+      - Set environment variables for lab: lab/cloud/prereqs/setup.md
+    - Lab 1 - simple plaintext contract: 
+      - Lab 1 overview: lab/cloud/lab1/index.md
+      - Prepare the contract: lab/cloud/lab1/prepcontract.md
+      - Create your Hyper Protect Virtual Servers for IBM Cloud VPC instance: lab/cloud/lab1/createinstance.md
+    - Lab 2 - partially encrypted contract: 
+      - Lab 2 overview: lab/cloud/lab2/index.md
+      - Prepare the contract: lab/cloud/lab2/prepcontract.md
+      - Create your Hyper Protect Virtual Servers for IBM Cloud VPC instance: lab/cloud/lab2/createinstance.md
+    - Lab 3 - encrypted contract:
+      - Lab 3 overview: lab/cloud/lab3/index.md
+      - Prepare the contract: lab/cloud/lab3/prepcontract.md
+      - Create your Hyper Protect Virtual Servers for IBM Cloud VPC instance: lab/cloud/lab3/createinstance.md
+    - Lab 4 - encrypted and signed contract:
+      - Lab 4 overview: lab/cloud/lab4/index.md
+      - Prepare the contract: lab/cloud/lab4/prepcontract.md
+      - Create your Hyper Protect Virtual Servers for IBM Cloud VPC instance: lab/cloud/lab4/createinstance.md
+    - IBM Cloud-based labs cleanup: lab/cloud/cleanup/cleanup.md
+    
+  - Locally Building docs: localdocbuild.md
+  - Additional Resources: 
+    - Files created in the on-premises labs: lab/onpremises/filesCreated.md
+
+theme:
+  favicon: images/HPVS2.1.xGraphic.png
+  logo: images/HPVS2.1.xGraphic.png
+  features:
+    - header.autohide
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.tracking
+    - navigation.footer
+    - search.share
+    - navigation.indexes
+    - announce.dismiss
+    - content.tabs.link
+    - content.code.copy
+    - content.action.edit
+    - content.action.view
+    
+  name: material
+  palette:
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      primary: black
+      accent: yellow
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      primary: black
+      accent: yellow
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+copyright: >
+  Copyright &copy; 2022,2025 IBM
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ibm-wsc
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - codehilite
+  - footnotes
+  - md_in_html
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.keys
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      auto_append:
+        - includes/glossary.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tilde
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+plugins:
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: true
+  - print-site:
+      add_to_navigation: true

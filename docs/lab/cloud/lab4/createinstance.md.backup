@@ -1,0 +1,23 @@
+# Create an instance
+
+1. Go to your VPC
+
+1. Click link to create a VPC compute instance
+
+1. Select LinuxONE
+
+1. Select the confidential computing toggle
+
+1. Go to your prep system and copy the output of your contract and paste it into the user data field.
+
+1. Create a 10 GB data volume
+
+1. Create your instance
+
+1. Use your IBM Log Analysis Dashboard and verify you receive log messages include the expected messages based on the variables you set
+
+1. Attach the data volume you created for Lab 1 to this instance
+
+1. Delete your instance.
+
+

@@ -1,0 +1,253 @@
+# Prepare the contract 
+
+1. Go to a command prompt on your prep system
+
+1. Make a fresh directory and change in to it:
+
+    ``` bash
+    mkdir -p ${HOME}/cloudlabs/lab4 && cd ${HOME}/cloudlabs/lab4
+    ```
+
+1. Create the following directory structure and then switch to the directory that will hold the docker compose file:
+
+    ``` bash
+    mkdir -p {environment,workload/compose} && cd workload/compose
+    ```
+
+1. Create the docker compose file (Note: this is the same docker compose file from the first three labs):
+
+    ``` bash
+    cat << EOF > docker-compose.yml    
+    services:
+      demo1:
+        image: docker.io/busybox@sha256:3614ca5eacf0a3a1bcc361c939202a974b4902b9334ff36eb29ffe9011aaad83
+        volumes:
+          - /mnt/data:/data
+        environment:
+          - NAME=\${firstname:-World}
+          - INTERVAL=\${interval:-60}
+        command: >
+          sh -c '
+            mkdir -p /data/barry ; env | tee -a /data/barry/env.out; cat /data/barry/env.out; head /data/barry/greetings.out ; tail /data/barry/greetings.out ; while true ; do sleep \$\${INTERVAL} ; echo hello \$\${NAME} the time is \$\$(date) | tee -a /data/barry/greetings.out ; done
+          '
+    EOF
+    ```
+
+1. Display the file's content.
+
+    ``` bash
+    cat docker-compose.yml
+    ```
+
+1. Backup one directory level:
+
+    ``` bash
+    cd ..
+    ```
+    
+1. If you are running Linux run these commands:
+
+    ``` bash
+    COMPOSE_B64=$(tar -czv -C compose . | base64 -w0)
+    B64_ARGS=' -w0'
+    ```
+
+1. If you are running MacOS run these commands:
+
+    ``` bash
+    COMPOSE_B64=$(gtar -czv -C compose . | base64)
+    B64_ARGS=''
+    ```
+
+1. Change to the directory one level higher than your current location (and display it):
+
+    ``` bash
+    cd .. && pwd
+    ```
+    
+1. Create the following convenience script that will create an RSA key pair that you will use to sign the contract. 
+
+    ``` bash
+    cat << EOF > flow.prepare
+    # Use the following command to generate key pair to sign the contract 
+    openssl genrsa -aes128 -passout pass:test1234 -out private.pem 4096
+    openssl rsa -in private.pem -passin pass:test1234 -pubout -out public.pem
+
+    # The following command is an example of how you can get the signing key:
+    key=\$(awk -vRS="\n" -vORS="\\\\\n" '1' public.pem)
+    echo "  signingKey: \"\${key%\\\\n}\"" > environment/pubSigningKey.yaml
+    EOF
+    ```
+
+1. Create the following convenience script that will sign the encrypted contract.
+
+    ``` bash
+    cat << EOF > flow.signature
+    # combine workload and environment
+    cat workload.yaml env.yaml | tr -d '\n' > contract.yaml
+
+    # Sign the combination from workload and env being approved
+    echo \$( cat contract.yaml | openssl dgst -sha256 -sign private.pem | openssl enc -base64) | tr -d ' ' > signature.yaml
+
+    # Create user data and add signature:
+    echo "workload: \$(cat workload.yaml)
+    env: \$(cat env.yaml)
+    envWorkloadSignature: \$(cat signature.yaml)" > user_data.yaml
+    
+    echo ""
+    echo "import `pwd`/user_data.yaml into User Data or copy and paste from below:"
+    echo ""
+    
+    cat user_data.yaml
+    EOF
+    ```
+
+1. Create this convenience script to encrypt the workload portion of the contract:
+ 
+    ``` bash
+    cat << EOF > workload/flow.workload
+    # Create the workload section of the contract and add the contents in the workload.yaml file.
+    
+    WORKLOAD_PLAIN=./workload.yaml.plaintext
+    WORKLOAD=workload.yaml
+    
+    echo "  type: workload
+      volumes:
+        data:
+          filesystem: ext4
+          mount: /mnt/data
+          seed: seed-supplied-by-workload-persona
+      compose:
+        archive: \${COMPOSE_B64}" > \${WORKLOAD_PLAIN}
+    
+    # Download certificate to encrypt contract for Hyper Protect Container Runtime:
+    HPCR_rev=10
+    CONTRACT_KEY=./ibm-hyper-protect-container-runtime-1-0-s390x-\${HPCR_rev}-encrypt.crt
+    curl https://cloud.ibm.com/media/docs/downloads/hyper-protect-container-runtime/ibm-hyper-protect-container-runtime-1-0-s390x-\${HPCR_rev}-encrypt.crt > \${CONTRACT_KEY}
+    
+    
+    # Use the following command to create a random password:
+    PASSWORD_WORKLOAD="\$(openssl rand 32 | base64 \${B64_ARGS})"
+    
+    # Use the following command to encrypt password with the Hyper Protect Container Runtime Contract Encryption Key:
+    ENCRYPTED_WORKLOAD_PASSWORD="\$(echo -n "\$PASSWORD_WORKLOAD" | base64 -d | openssl rsautl -encrypt -inkey \$CONTRACT_KEY -certin | base64 \${B64_ARGS})"
+    
+    # Use the following command to encrypt the workload.yaml file with a random password:
+    ENCRYPTED_WORKLOAD="\$(echo -n "\$PASSWORD_WORKLOAD" | base64 -d | openssl enc -aes-256-cbc -pbkdf2 -pass stdin -in "\$WORKLOAD_PLAIN" | base64 ${B64_ARGS})"
+    
+    # Use the following command to get the encrypted section of the contract:
+    WORKLOAD_ENCRYPTED="hyper-protect-basic.\${ENCRYPTED_WORKLOAD_PASSWORD}.\${ENCRYPTED_WORKLOAD}"
+    
+    echo ""
+    echo "See `pwd`/workload.yaml.plaintext to see what was encrypted for the workload section of your contract"
+    echo ""
+    
+    echo "\$WORKLOAD_ENCRYPTED" > ../\$WORKLOAD
+    EOF
+    ```
+
+1. Check to see if the environment variable for your IBM Log Analysis instance is still set from the prior lab:
+
+    ``` bash
+    echo ${LOG_INGESTION_KEY}
+    ```
+
+1. Skip this instruction if it is already set; otherwise, set an environment variable for your IBM Log Analysis ingestion key
+
+    ``` bash
+    LOG_INGESTION_KEY="paste your ingestion key here"
+    ```
+
+1. Check to see if the environment variable for the hostname of your IBM Log Analysis instance is still set from the prior lab:
+
+    ``` bash
+    echo ${LOG_HOSTNAME}
+    ```
+
+1. Skip this instruction if it is already set; otherwise, set an environment variable for the hostname of your IBM Log Analysis instance
+
+    ``` bash
+    LOG_HOSTNAME="paste your IBM Log Analysis hostname here">
+    ```
+
+1. Create this convenience script to encrypt the environment portion of the contract:
+
+
+    ``` bash
+    cat << EOF > environment/flow.env
+    # Create the env section of the contract and add the contents in the env.yaml file.
+    ENV_PLAIN="./env.yaml.plaintext"
+    ENV="env.yaml"
+    
+    echo "  type: env
+      logging:
+        logDNA:
+          hostname: \${LOG_HOSTNAME}
+          ingestionKey: \${LOG_INGESTION_KEY}
+          port: 6514
+      env:
+        firstname: Princess Catherine
+        interval: \"30\"
+      volumes:
+        data:
+          seed: seed-supplied-by-env-persona" > \${ENV_PLAIN}
+    
+    cat ./pubSigningKey.yaml >> \${ENV_PLAIN}
+
+    # Download certificate to encrypt contract for Hyper Protect Container Runtime:
+    HPCR_rev=10
+    CONTRACT_KEY=./ibm-hyper-protect-container-runtime-1-0-s390x-\${HPCR_rev}-encrypt.crt
+    curl https://cloud.ibm.com/media/docs/downloads/hyper-protect-container-runtime/\$CONTRACT_KEY > \$CONTRACT_KEY
+    
+    
+    # Use the following command to create a random password:
+    PASSWORD_ENV="\$(openssl rand 32 | base64 \${B64_ARGS})"
+    
+    #  Use the following command to encrypt password with the Hyper Protect Container Runtime Contract Encryption Key:
+    ENCRYPTED_ENV_PASSWORD="\$(echo -n "\$PASSWORD_ENV" | base64 -d | openssl rsautl -encrypt -inkey \$CONTRACT_KEY -certin | base64 \${B64_ARGS} )"
+    
+    # Use the following command to encrypt env.yaml with a random password:
+    ENCRYPTED_ENV="\$(echo -n "\$PASSWORD_ENV" | base64 -d | openssl enc -aes-256-cbc -pbkdf2 -pass stdin -in "\$ENV_PLAIN" | base64 \${B64_ARGS})"
+    
+    # Use the following command to get the encrypted section of the contract:
+    ENV_ENCRYPTED="hyper-protect-basic.\${ENCRYPTED_ENV_PASSWORD}.\${ENCRYPTED_ENV}"
+    
+    echo ""
+    echo "See `pwd`/env.yaml.plaintext to see what was encrypted for the env section of your contract"
+    echo ""
+    
+    echo "\$ENV_ENCRYPTED" > ../\$ENV
+    EOF
+    ```
+
+1. Create this convenience script that you will use to create the signed and encrypted contract:
+
+    ``` bash
+    cat << EOF > makeContract
+    . ./flow.prepare
+    cd workload
+    . ./flow.workload
+    cd ../environment
+    . ./flow.env
+    cd ..
+    . ./flow.signature
+    EOF
+    ```
+
+1. Create the contract:
+
+    ``` bash
+    . ./makeContract
+    ```
+
+    Enter the passphrase `test1234` when prompted.
+   
+1. Display your contract data:
+
+    ``` bash
+    cat user_data.yaml
+    ```
+
+Proceed to the next section to create your Hyper Protect Virtual Servers for IBM Cloud VPC instance.
+
+  

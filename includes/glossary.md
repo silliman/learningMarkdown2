@@ -1,0 +1,18 @@
+*[CA]: certification authority
+*[CA registrar]: certification authority-speak for administrator
+*[CENA4SEE]: This is an instructor-coined acronym for the Crypto Express Network API for Secure Execution Enclaves component of the Hyper Protect Virtual Servers product. You will not see CENA4SEE in official product documentation- official documentation often uses the mnemonic c16 to refer to the server provided by Crypto Expres Network API for Secure Execution Enclaves.  You can consider 'c16', 'c16 server'  and 'CENA4SEE' to be synonyms of each other for the purposes of this lab.
+*[Confidential Computing]: Confidential computing is a cloud computing technology that isolates sensitive data in a protected CPU enclave during processing. The contents of the enclave—the data being processed, and the techniques that are used to process it—are accessible only to authorized programming code, and are invisible and unknowable to anything or anyone else, including the cloud provider.
+*[container]: a running instance of an OCI image.
+*[CSR]: certificate signing request
+*[Docker Compose]: a tool for defining and running multi-container Docker applications. With Compose, you use a YAML file to configure your application’s services. Then, with a single command, you create and start all the services from your configuration.
+*[GREP11]: This is an API that provides a set of EP11 calls over the gRPC protocol.  EP11 itself stands for 'Enterprise PKCS#11' which is an IBM-proprietary interface that is similar to the PKCS#11 standard.
+*[HPCR]:Hyper Protect Container Runtime- this is the name given to the Secure Execution-enabled qcow2 image that is provided with Hyper Protect Virtual Servers 2.1.x. The container runtime provided within this image launches the customer's workload as an OCI container, in accordance with the "contract" specified by the customer. 
+*[mint]: certification authority-speak for create
+*[OCI]: Open Container Initiative: an open governance structure for the express purpose of creating open industry standards around container formats and runtimes. There are 3 specifications: the Runtime Specification (runtime-spec), the Image Specification (image-spec) and the Distribution Specification (distribution-spec)
+*[OCI image]: a package of all the things needed to run your software
+*[RHEL]: Red Hat Enterprise Linux
+*[rsyslog]: rsyslog is a system utility providing support for message logging.  Support of both internet and unix domain sockets enables this utility to support both local and remote logging
+*[Secure Execution]: IBM® Secure Execution for Linux® is a z/Architecture® security technology that is introduced with IBM z15™ and LinuxONE III. It protects data of workloads that run in a KVM guest from being inspected or modified by the server environment. In particular, no hardware administrator, no KVM code, and no KVM administrator can access the data in a guest that was started as an IBM Secure Execution guest.
+*[Secure Service Container]: a type of LPAR introduced by IBM with the z14 hardware generation.  Hyper Protect Virtual Servers v1.x was built on SSC technology, and the Crypto Express Network API for Secure Execution Enclaves component of HPVS v2.x is also built on SSC technology.
+*[SSC]: Secure Service Container- a type of LPAR introduced by IBM with the z14 hardware generation.  Hyper Protect Virtual Servers v1.x was built on SSC technology, and the Crypto Express Network API for Secure Execution Enclaves component of HPVS v2.x is also built on SSC technology.
+*[standard KVM guest]: this is a term we use to refer to a KVM guest that is not protected with Secure Execution for Linux
